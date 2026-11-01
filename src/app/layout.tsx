@@ -4,6 +4,7 @@ import { Fraunces, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
+import { Toaster } from "@/components/ui/toast";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -80,6 +81,7 @@ export default function RootLayout({
       >
         <Navbar />
         {children}
+        <Toaster position ="bottom-center" />
       </body>
     </html>
   );

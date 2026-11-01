@@ -36,6 +36,8 @@ type SocialProvider = "google" | "facebook";
 export default function Basic() {
   const router = useRouter();
 
+  
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
