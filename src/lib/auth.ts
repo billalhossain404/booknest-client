@@ -18,5 +18,25 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    },
+    facebook: {
+      clientId: process.env.FACEBOOK_CLIENT_ID as string,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
+      scopes: ["email", "public_profile"],
+      mapProfileToUser: (profile) => {
+        if (profile.email || profile.picture) {
+          return {};
+        }
+
+        const facebookUserId = "sub" in profile ? profile.sub : profile.id;
+        return {
+          email: `facebook-${facebookUserId}@users.booknest.local`,
+        };
+      },
+    },
+  },
 });

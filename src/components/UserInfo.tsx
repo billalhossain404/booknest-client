@@ -38,6 +38,7 @@ const UserInfo = () => {
                 alt={user.name || "User"}
                 width={44}
                 height={44}
+                unoptimized={Boolean(user.image)}
                 className="h-11 w-11 rounded-full border border-[#E5E0D5] object-cover"
               />
 
