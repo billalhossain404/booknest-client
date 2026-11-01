@@ -51,14 +51,14 @@ export default function Navbar() {
 
         <div className="flex shrink-0 items-center gap-4">
           <Link
-            href="/login"
+            href="/sign-in"
             className="whitespace-nowrap text-[17px] font-medium text-[#234D3C] transition-colors hover:text-[#B18B4F]"
           >
             Login
           </Link>
 
           <Link
-            href="/register"
+            href="/sign-up"
             className="inline-flex items-center gap-2 whitespace-nowrap rounded-md bg-[#234D3C] px-5 py-3 text-sm font-medium text-white transition-all hover:bg-[#18382C]"
           >
             Join the library

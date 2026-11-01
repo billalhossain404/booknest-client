@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from "next/image";
@@ -86,7 +85,6 @@ const Banner = () => {
     >
       <div className="relative flex min-h-[620px] w-full items-center px-6 py-16 lg:min-h-[590px]">
 
-        {/* Slider Images */}
         {slides.map((slide, index) => (
           <Image
             key={slide.image}
@@ -103,11 +101,10 @@ const Banner = () => {
           />
         ))}
 
-        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#FAF9F5] via-[#FAF9F5]/95 to-transparent lg:via-[#FAF9F5]/75" />
 
         <div className="relative z-10 mx-auto flex w-full max-w-7xl items-center">
-          {/* Complete Slider Content */}
+
           <div className="grid w-full max-w-xl">
 
             {slides.map((slide, index) => (
@@ -121,24 +118,20 @@ const Banner = () => {
                 }`}
               >
 
-                {/* Subtitle */}
                 <p className="mb-5 text-xs font-semibold uppercase tracking-[0.32em] text-[#B18B4F] sm:text-sm">
                   {slide.subtitle}
                 </p>
 
-                {/* Heading */}
                 <h1 className="max-w-lg text-5xl font-semibold leading-[0.98] tracking-[-0.04em] text-[#234D3C] sm:text-6xl lg:text-7xl">
                   {slide.title1}
                   <br />
                   {slide.title2}
                 </h1>
 
-                {/* Description */}
                 <p className="mt-7 max-w-md text-base leading-7 text-[#535B53] sm:text-lg">
                   {slide.description}
                 </p>
 
-                {/* Button */}
                 <Link
                   href={slide.buttonLink}
                   tabIndex={activeSlide === index ? 0 : -1}
@@ -154,10 +147,8 @@ const Banner = () => {
           </div>
         </div>
 
-        {/* Slider Navigation */}
         <div className="absolute bottom-7 left-1/2 z-10 flex w-full max-w-7xl -translate-x-1/2 items-center justify-end gap-3 px-6">
 
-          {/* Previous Button */}
           <button
             type="button"
             aria-label="Previous slide"
@@ -167,7 +158,6 @@ const Banner = () => {
             <ArrowLeft className="h-4 w-4" />
           </button>
 
-          {/* Slide Indicators */}
           <div
             className="flex items-center gap-2"
             aria-label="Slide navigation"
@@ -188,7 +178,6 @@ const Banner = () => {
             ))}
           </div>
 
-          {/* Next Button */}
           <button
             type="button"
             aria-label="Next slide"
