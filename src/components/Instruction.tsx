@@ -111,6 +111,7 @@ const Instruction = () => {
             </p>
 
             <Button
+            nativeButton={false}
               render={<Link href="/books" />}
               className="h-11 w-full rounded-lg bg-[#d79c45] px-5 text-sm text-white shadow-sm hover:bg-[#c58c38] sm:w-fit"
             >
