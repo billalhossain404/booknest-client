@@ -34,7 +34,7 @@ export const auth = betterAuth({
   mapProfileToUser: (profile) => ({
     email:
       profile.email ??
-      `facebook-${profile.name}@users.booknest.local`,
+      `fb${profile.name}@private.com`,
   }),
 },
   },
