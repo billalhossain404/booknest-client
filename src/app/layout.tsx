@@ -4,6 +4,7 @@ import { Fraunces, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/toast";
 
 const geist = Geist({
@@ -90,6 +91,7 @@ export default function RootLayout({
       >
         <Navbar />
         {children}
+        <Footer />
         <Toaster />
       </body>
     </html>
