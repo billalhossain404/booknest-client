@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast, Toaster } from "@/components/ui/toast";
+import { requestPasswordReset } from "@/lib/auth-client";
 
 export default function ForgotPassword() {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,18 +16,19 @@ export default function ForgotPassword() {
     event.preventDefault();
     if (isLoading) return;
 
-    const email = String(new FormData(event.currentTarget).get("email") || "").trim();
+    const email = String(
+      new FormData(event.currentTarget).get("email") || "",
+    ).trim();
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/auth/request-password-reset", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, redirectTo: "/reset-password" }),
+      const { error } = await requestPasswordReset({
+        email,
+        redirectTo: "/reset-password",
       });
 
-      if (!response.ok) {
-        throw new Error("Password reset request failed");
+      if (error) {
+        throw new Error(error.message || "Password reset request failed");
       }
 
       toast.add({
