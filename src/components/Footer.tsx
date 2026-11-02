@@ -23,6 +23,8 @@ const socialLinks = [
 
 export default function Footer() {
   return (
+
+    
     <footer className="relative overflow-hidden bg-[#faf9f5] text-[#122b22]">
       <div className="pointer-events-none absolute -left-16 bottom-28 hidden h-36 w-36 rounded-full border-[18px] border-[#dcebd8] opacity-60 sm:block" />
       <div className="pointer-events-none absolute -right-20 top-8 hidden h-56 w-56 rounded-full border-[16px] border-[#eee2c9] opacity-70 md:block" />
