@@ -13,8 +13,8 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "All Books", href: "/books" },
-    { name: "Add Book", href: "/books/new" },
+    { name: "All Books", href: "/all-books" },
+    { name: "Add Book", href: "/add-books" },
     { name: "My Books", href: "/my-books" },
     { name: "My Borrow", href: "/my-borrow" },
   ];
