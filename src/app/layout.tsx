@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/toast";
+import Instruction from "@/components/Instruction";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -91,6 +92,7 @@ export default function RootLayout({
       >
         <Navbar />
         {children}
+        <Instruction />
         <Footer />
         <Toaster />
       </body>
