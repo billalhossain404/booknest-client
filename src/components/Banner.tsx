@@ -59,7 +59,7 @@ const slides = [
     description:
       "Keep your reading experience organized in one beautiful place. Easily manage your borrowed books, explore your collection and stay connected with your growing library.",
     buttonText: "My Borrowed Books",
-    buttonLink: "/my-borrow",
+    buttonLink: "/my-borrows",
   },
 ];
 

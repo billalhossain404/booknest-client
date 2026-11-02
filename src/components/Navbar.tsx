@@ -16,7 +16,7 @@ export default function Navbar() {
     { name: "All Books", href: "/all-books" },
     { name: "Add Book", href: "/add-books" },
     { name: "My Books", href: "/my-books" },
-    { name: "My Borrow", href: "/my-borrow" },
+    { name: "My Borrow", href: "/my-borrows" },
   ];
 
   return (
