@@ -6,7 +6,10 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/toast";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -22,6 +25,12 @@ export const metadata: Metadata = {
     "Discover, share, and borrow books with BookNest. Explore our online library, add your favorite books, manage your collection, and enjoy a seamless book borrowing experience.",
 
   applicationName: "BookNest",
+
+  // Favicon Configuration
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+  },
 
   keywords: [
     "BookNest",
