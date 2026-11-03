@@ -1,7 +1,9 @@
- "use client";
-
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+
 import {
   ArrowRight,
   BookOpen,
@@ -12,51 +14,49 @@ import {
   UserRound,
 } from "lucide-react";
 
-type BorrowedBook = {
-  id: number;
-  title: string;
-  author: string;
-  borrowedOn: string;
-  returnBy: string;
-  cover: string;
-  coverTone: string;
+import type { LucideIcon } from "lucide-react";
+
+// Book Type
+type Booking = {
+  _id: string;
+  title?: string;
+  author?: string;
+  bookUrl?: string;
+  userEmail?: string;
+  date?: string;
+  returnBy?: string;
 };
 
-const initialBooks: BorrowedBook[] = [
-  {
-    id: 1,
-    title: "The Secret Garden",
-    author: "Frances Hodgson Burnett",
-    borrowedOn: "May 2, 2025",
-    returnBy: "May 23, 2025",
-    cover: "The\nSecret\nGarden",
-    coverTone: "from-[#284f36] via-[#78914b] to-[#d4b674]",
-  },
-
-];
-
-const RETURNED_BOOKS_STORAGE_KEY = "booknest-returned-books";
-
-function BookCover({ book }: { book: BorrowedBook }) {
+// Book Cover
+function BookCover({ title, image }: { title: string; image?: string }) {
   return (
-    <div
-      className={`flex h-[54px] w-[42px] shrink-0 items-center justify-center bg-gradient-to-br ${book.coverTone} p-1 text-center text-[7px] font-semibold leading-[1.05] text-[#fff9e8] shadow-[0_3px_8px_rgba(27,45,34,0.2)] sm:h-[58px] sm:w-[45px]`}
-      aria-label={`${book.title} cover`}
-    >
-      <span className="whitespace-pre-line border border-white/50 px-1 py-1">
-        {book.cover}
-      </span>
+    <div className="relative flex h-[54px] w-[42px] shrink-0 items-center justify-center overflow-hidden rounded-sm bg-[#e8eee1] shadow-[0_3px_8px_rgba(27,45,34,0.2)] sm:h-[58px] sm:w-[45px]">
+      {image ? (
+        <Image
+          src={image}
+          alt={`${title} cover`}
+          fill
+          unoptimized
+          sizes="45px"
+          className="object-contain"
+        />
+      ) : (
+        <span className="px-1 text-center font-serif text-[7px] font-semibold text-[#285b48]">
+          {title}
+        </span>
+      )}
     </div>
   );
 }
 
+// Stat Card
 function StatCard({
   icon: Icon,
   label,
   value,
   tone,
 }: {
-  icon: typeof BookOpen;
+  icon: LucideIcon;
   label: string;
   value: number;
   tone: "green" | "gold" | "red";
@@ -69,9 +69,12 @@ function StatCard({
 
   return (
     <div className="flex items-center gap-4 rounded-lg border border-[#e6e5d9] bg-[#f0f1e7]/80 px-4 py-4 sm:px-5">
-      <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${styles[tone]}`}>
+      <span
+        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${styles[tone]}`}
+      >
         <Icon size={22} strokeWidth={1.6} />
       </span>
+
       <div>
         <p className="text-xs text-[#566258]">{label}</p>
         <p className="mt-0.5 font-serif text-2xl font-semibold leading-none text-[#19372d]">
@@ -82,140 +85,348 @@ function StatCard({
   );
 }
 
-export default function MyBorrowsPage() {
-  const [books, setBooks] = useState(initialBooks);
+// Logout Action
+async function handleLogout() {
+  "use server";
 
-  useEffect(() => {
-    const storedReturnedBooks = window.localStorage.getItem(
-      RETURNED_BOOKS_STORAGE_KEY,
-    );
+  await auth.api.signOut({
+    headers: await headers(),
+  });
 
-    if (!storedReturnedBooks) {
-      return;
-    }
+  redirect("/signin");
+}
 
+// Main Component
+const MyBorrows = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
+
+  // Fetch Booking Data
+  let bookings: Booking[] = [];
+  let errorMessage = "";
+
+  if (user?.email) {
     try {
-      const returnedBookIds = JSON.parse(storedReturnedBooks) as unknown;
-
-      if (!Array.isArray(returnedBookIds)) {
-        return;
-      }
-
-      window.setTimeout(() => {
-        setBooks((currentBooks) =>
-          currentBooks.filter((book) => !returnedBookIds.includes(book.id)),
-        );
-      }, 0);
-    } catch (error) {
-      console.error("Unable to restore returned books:", error);
-    }
-  }, []);
-
-  const borrowedCount = books.length;
-  const dueThisWeek = useMemo(() => books.length > 0 ? 2 : 0, [books.length]);
-
-  const returnBook = (id: number) => {
-    setBooks((currentBooks) => {
-      const updatedBooks = currentBooks.filter((book) => book.id !== id);
-      const returnedBookIds = initialBooks
-        .filter((book) => !updatedBooks.some((updatedBook) => updatedBook.id === book.id))
-        .map((book) => book.id);
-
-      window.localStorage.setItem(
-        RETURNED_BOOKS_STORAGE_KEY,
-        JSON.stringify(returnedBookIds),
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/my-bookings/${encodeURIComponent(user.email)}`,
+        {
+          cache: "no-store",
+        },
       );
 
-      return updatedBooks;
-    });
-  };
+      if (!res.ok) {
+        throw new Error("Failed to fetch bookings");
+      }
+
+      const data = await res.json();
+
+      if (!Array.isArray(data)) {
+        throw new Error("Invalid booking data");
+      }
+
+      bookings = data;
+    } catch (error) {
+      console.error("Booking fetch error:", error);
+
+      errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Unable to load your borrowed books.";
+    }
+  }
+
+  // Date Calculation
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const nextWeek = new Date(today);
+  nextWeek.setDate(nextWeek.getDate() + 7);
+
+  // Prepare Book Data
+  const borrowedBooks = bookings.map((book) => {
+    const borrowedDate = book.date ? new Date(book.date) : null;
+
+    const validBorrowedDate =
+      borrowedDate && !Number.isNaN(borrowedDate.getTime())
+        ? borrowedDate
+        : null;
+
+    let returnDate: Date | null = null;
+
+    if (book.returnBy) {
+      const parsedDate = new Date(book.returnBy);
+
+      if (!Number.isNaN(parsedDate.getTime())) {
+        returnDate = parsedDate;
+      }
+    } else if (validBorrowedDate) {
+      returnDate = new Date(validBorrowedDate);
+      returnDate.setDate(returnDate.getDate() + 14);
+    }
+
+    const formatDate = (date: Date | null) => {
+      if (!date) return "Not set";
+
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "Asia/Dhaka",
+      });
+    };
+
+    return {
+      id: book._id,
+      title: book.title || "Untitled book",
+      author: book.author || "Unknown author",
+      bookUrl: book.bookUrl || "",
+      borrowedOn: formatDate(validBorrowedDate),
+      returnBy: formatDate(returnDate),
+      returnDate,
+    };
+  });
+
+  // Statistics
+  const borrowedCount = borrowedBooks.length;
+
+  const dueThisWeek = borrowedBooks.filter((book) => {
+    if (!book.returnDate) return false;
+
+    return book.returnDate >= today && book.returnDate <= nextWeek;
+  }).length;
+
+  const overdueCount = borrowedBooks.filter((book) => {
+    if (!book.returnDate) return false;
+
+    return book.returnDate < today;
+  }).length;
 
   return (
     <main className="bg-[#faf9f5] text-[#20372e]">
       <div className="mx-auto flex max-w-[1200px] gap-0 px-0 lg:gap-5 lg:px-3 lg:py-3">
+        {/* Sidebar */}
         <aside className="hidden w-[215px] shrink-0 rounded-lg bg-[#edf0e4] px-5 py-5 lg:block">
           <div className="flex items-center gap-3 border-b border-[#d8ddcf] pb-5">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#decab0] text-[#29483c]">
               <UserRound size={23} strokeWidth={1.5} />
             </div>
-            <div>
-              <p className="text-sm font-semibold text-[#29483c]">Emma Chen</p>
+
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-[#29483c]">
+                {user?.name || "Reader"}
+              </p>
               <p className="text-[11px] text-[#6c766c]">Reader</p>
             </div>
           </div>
+
           <nav className="space-y-1 py-5">
-            <Link href="/all-books" className="flex items-center gap-3 rounded-md px-3 py-2.5 text-xs text-[#405148] transition hover:bg-white/70">
-              <BookOpen size={18} strokeWidth={1.5} /> My Books
+            <Link
+              href="/all-books"
+              className="flex items-center gap-3 rounded-md px-3 py-2.5 text-xs text-[#405148] transition hover:bg-white/70"
+            >
+              <BookOpen size={18} strokeWidth={1.5} />
+              My Books
             </Link>
-            <Link href="/my-borrows" className="flex items-center gap-3 rounded-md border-l-2 border-[#b98a35] bg-[#174b39] px-3 py-2.5 text-xs font-medium text-white shadow-sm">
-              <BookOpenCheck size={18} strokeWidth={1.5} /> My Borrows
+
+            <Link
+              href="/my-borrows"
+              className="flex items-center gap-3 rounded-md border-l-2 border-[#b98a35] bg-[#174b39] px-3 py-2.5 text-xs font-medium text-white shadow-sm"
+            >
+              <BookOpenCheck size={18} strokeWidth={1.5} />
+              My Borrows
             </Link>
-            <Link href="/profile" className="flex items-center gap-3 rounded-md px-3 py-2.5 text-xs text-[#405148] transition hover:bg-white/70">
-              <UserRound size={18} strokeWidth={1.5} /> My Profile
+
+            <Link
+              href="/profile"
+              className="flex items-center gap-3 rounded-md px-3 py-2.5 text-xs text-[#405148] transition hover:bg-white/70"
+            >
+              <UserRound size={18} strokeWidth={1.5} />
+              My Profile
             </Link>
           </nav>
+
           <div className="border-t border-[#d8ddcf] pt-5">
-            <button type="button" className="flex items-center gap-3 px-3 py-2.5 text-xs text-[#405148] transition hover:text-[#174b39]">
-              <LogOut size={18} strokeWidth={1.5} /> Log out
-            </button>
+            <form action={handleLogout}>
+              <button
+                type="submit"
+                className="flex items-center gap-3 px-3 py-2.5 text-xs text-[#405148] transition hover:text-[#174b39]"
+              >
+                <LogOut size={18} strokeWidth={1.5} />
+                Log out
+              </button>
+            </form>
           </div>
         </aside>
 
+        {/* Main Content */}
         <section className="min-w-0 flex-1 px-4 py-8 sm:px-7 lg:px-0 lg:py-1">
+          {/* Header */}
           <header className="mb-5">
-            <p className="mb-1 text-[11px] uppercase tracking-[0.24em] text-[#a57931]">Your personal library</p>
+            <p className="mb-1 text-[11px] uppercase tracking-[0.24em] text-[#a57931]">
+              Your personal library
+            </p>
+
             <h1 className="font-serif text-4xl font-semibold tracking-tight text-[#12372d] sm:text-[42px]">
               Your reading corner
             </h1>
-            <p className="mt-1 text-sm text-[#405148]">Keep a good story close.</p>
+
+            <p className="mt-1 text-sm text-[#405148]">
+              Keep a good story close.
+            </p>
           </header>
 
+          {/* Statistics */}
           <div className="grid gap-3 sm:grid-cols-3">
-            <StatCard icon={BookOpen} label="Borrowed books" value={borrowedCount} tone="green" />
-            <StatCard icon={CalendarDays} label="Due this week" value={dueThisWeek} tone="gold" />
-            <StatCard icon={CircleAlert} label="Overdue" value={0} tone="red" />
+            <StatCard
+              icon={BookOpen}
+              label="Borrowed books"
+              value={borrowedCount}
+              tone="green"
+            />
+
+            <StatCard
+              icon={CalendarDays}
+              label="Due this week"
+              value={dueThisWeek}
+              tone="gold"
+            />
+
+            <StatCard
+              icon={CircleAlert}
+              label="Overdue"
+              value={overdueCount}
+              tone="red"
+            />
           </div>
 
+          {/* My Borrows */}
           <section className="mt-3 rounded-lg border border-[#e5e3d8] bg-white/70 p-4 shadow-[0_8px_24px_rgba(38,60,45,0.03)] sm:p-4">
-            <h2 className="mb-3 font-serif text-xl font-semibold text-[#18392e]">My Borrows</h2>
+            <h2 className="mb-3 font-serif text-xl font-semibold text-[#18392e]">
+              My Borrows
+            </h2>
+
+            {/* Table Header */}
             <div className="hidden grid-cols-[2.4fr_1fr_1fr_0.75fr_0.85fr] rounded-md bg-[#e7eadc] px-3 py-2 text-[10px] font-medium text-[#37493e] sm:grid">
-              <span>Book</span><span>Borrowed on</span><span>Return by</span><span>Status</span><span>Action</span>
+              <span>Book</span>
+              <span>Borrowed on</span>
+              <span>Return by</span>
+              <span>Status</span>
+              <span>Action</span>
             </div>
+
             <div className="divide-y divide-[#ebe9e1]">
-              {books.length > 0 ? books.map((book) => (
-                <div key={book.id} className="grid gap-3 px-2 py-3.5 sm:grid-cols-[2.4fr_1fr_1fr_0.75fr_0.85fr] sm:items-center sm:px-3">
-                  <div className="flex items-center gap-4">
-                    <BookCover book={book} />
-                    <div className="min-w-0">
-                      <h3 className="truncate font-serif text-sm font-semibold text-[#213b30]">{book.title}</h3>
-                      <p className="truncate text-[10px] text-[#6d756e]">{book.author}</p>
-                    </div>
-                  </div>
-                  <div className="flex justify-between text-xs text-[#59645c] sm:block"><span className="sm:hidden">Borrowed on</span>{book.borrowedOn}</div>
-                  <div className="flex justify-between text-xs text-[#59645c] sm:block"><span className="sm:hidden">Return by</span>{book.returnBy}</div>
-                  <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#e8eee1] px-2.5 py-1 text-[10px] text-[#335541]"><span className="h-1.5 w-1.5 rounded-full bg-[#1e6849]" /> On loan</span>
-                  <button type="button" onClick={() => returnBook(book.id)} className="w-full rounded-md border border-[#c99c50] px-2 py-2 text-[10px] font-medium text-[#9a6a22] transition hover:bg-[#fcf4e3] sm:w-auto">Return Book</button>
+              {errorMessage ? (
+                <div className="px-4 py-12 text-center text-sm text-red-600">
+                  {errorMessage}
                 </div>
-              )) : (
-                <div className="px-4 py-12 text-center text-sm text-[#68746a]">You have returned all your books.</div>
+              ) : borrowedBooks.length > 0 ? (
+                borrowedBooks.map((book) => {
+                  const isOverdue =
+                    book.returnDate !== null && book.returnDate < today;
+
+                  return (
+                    <div
+                      key={book.id}
+                      className="grid gap-3 px-2 py-3.5 sm:grid-cols-[2.4fr_1fr_1fr_0.75fr_0.85fr] sm:items-center sm:px-3"
+                    >
+                      {/* Book */}
+                      <div className="flex items-center gap-4">
+                        <BookCover title={book.title} image={book.bookUrl} />
+
+                        <div className="min-w-0">
+                          <h3 className="truncate font-serif text-sm font-semibold text-[#213b30]">
+                            {book.title}
+                          </h3>
+
+                          <p className="truncate text-[10px] text-[#6d756e]">
+                            {book.author}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Borrowed On */}
+                      <div className="flex justify-between text-xs text-[#59645c] sm:block">
+                        <span className="sm:hidden">Borrowed on</span>
+                        {book.borrowedOn}
+                      </div>
+
+                      {/* Return By */}
+                      <div className="flex justify-between text-xs text-[#59645c] sm:block">
+                        <span className="sm:hidden">Return by</span>
+                        {book.returnBy}
+                      </div>
+
+                      {/* Status */}
+                      <span
+                        className={`inline-flex w-fit items-center gap-2 rounded-full px-2.5 py-1 text-[10px] ${
+                          isOverdue
+                            ? "bg-[#f3d4ca] text-[#a95543]"
+                            : "bg-[#e8eee1] text-[#335541]"
+                        }`}
+                      >
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${
+                            isOverdue ? "bg-[#a95543]" : "bg-[#1e6849]"
+                          }`}
+                        />
+
+                        {isOverdue ? "Overdue" : "On loan"}
+                      </span>
+
+                      {/* Return Button */}
+                      <button
+                        type="button"
+                        disabled
+                        className="w-full cursor-not-allowed rounded-md border border-[#c99c50] px-2 py-2 text-[10px] font-medium text-[#9a6a22] opacity-60 sm:w-auto"
+                      >
+                        Return Book
+                      </button>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="px-4 py-12 text-center text-sm text-[#68746a]">
+                  You haven&apos;t borrowed any books yet.
+                </div>
               )}
             </div>
           </section>
 
+          {/* Bottom Banner */}
           <div className="mt-3 flex flex-col gap-3 rounded-lg bg-[#e8eee1] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <BookOpenCheck className="text-[#2e6048]" size={28} strokeWidth={1.3} />
+              <BookOpenCheck
+                className="text-[#2e6048]"
+                size={28}
+                strokeWidth={1.3}
+              />
+
               <div className="border-l border-[#c4cdbd] pl-4">
-                <p className="font-serif text-base font-semibold text-[#1d3d30]">Finished your chapter?</p>
-                <p className="text-[11px] text-[#516157]">Return your book so another reader can enjoy it.</p>
+                <p className="font-serif text-base font-semibold text-[#1d3d30]">
+                  Finished your chapter?
+                </p>
+
+                <p className="text-[11px] text-[#516157]">
+                  Return your book so another reader can enjoy it.
+                </p>
               </div>
             </div>
-            <Link href="/all-books" className="inline-flex items-center justify-center gap-2 rounded-md bg-[#174b39] px-4 py-2.5 text-xs font-medium text-white transition hover:bg-[#103b2d]">
-              Browse more books <ArrowRight size={15} />
+
+            <Link
+              href="/all-books"
+              className="inline-flex items-center justify-center gap-2 rounded-md bg-[#174b39] px-4 py-2.5 text-xs font-medium text-white transition hover:bg-[#103b2d]"
+            >
+              Browse more books
+              <ArrowRight size={15} />
             </Link>
           </div>
         </section>
       </div>
     </main>
   );
-}
+};
+
+export default MyBorrows;
