@@ -1,144 +1,206 @@
+<div align="center">
+
 # BookNest
 
-> A modern community library platform for discovering, sharing, and borrowing books.
+### Discover. Share. Borrow. Read.
 
-BookNest is a full-featured Next.js frontend for a connected reading community. Users can discover books, view detailed information, share books with the library, manage their own collection, and keep track of borrowed books from a responsive, accessible interface.
+A modern community library platform for discovering books, sharing personal collections, and managing borrowing activity.
 
-## Live Demo
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-BookNest-1f5a43?style=for-the-badge)](https://booknest-client-seven.vercel.app/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-149eca?style=flat-square&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 
-Visit the deployed application: **[booknest-client-seven.vercel.app](https://booknest-client-seven.vercel.app/)**
+**[Explore the live application](https://booknest-client-seven.vercel.app/)**
 
-## Screenshots
+</div>
 
-### Home page
+## Table of Contents
 
-![BookNest home page](./public/screenshots/home-page.png)
+- [About the Project](#about-the-project)
+- [Key Features](#key-features)
+- [Technology Stack](#technology-stack)
+- [Application Flow](#application-flow)
+- [Screenshots](#screenshots)
+- [Routes](#routes)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Backend API Contract](#backend-api-contract)
+- [Available Scripts](#available-scripts)
+- [Project Structure](#project-structure)
+- [Authentication and Security](#authentication-and-security)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
 
-### All books
+## About the Project
 
-![BookNest all books page](./public/screenshots/all-books.png)
+BookNest connects readers through a simple digital library experience. Visitors can explore the public catalog and book details, while registered users can share books, borrow from the community, manage their collection, and return borrowed titles.
 
-### My borrows
+The application is built with the Next.js App Router and uses Better Auth for account management, MongoDB for authentication persistence, and a separate backend API for book and borrowing operations.
 
-![BookNest my borrows page](./public/screenshots/my-borrows.png)
+## Key Features
 
-## Features
+### For readers
 
-- **Book discovery** — Browse the complete catalog, search by title or author, filter by category, and sort results.
-- **Book details** — View detailed information and request to borrow an available book.
-- **Community collection** — Add books with metadata and an optional JPG/PNG cover image.
-- **Personal library** — View, search, filter, and manage books shared by the signed-in user.
-- **Borrowing dashboard** — See borrowed books, borrowing dates, return deadlines, and return books.
-- **Authentication** — Email/password sign-up and sign-in with Better Auth.
-- **Social authentication** — Google and Facebook provider support through Better Auth.
-- **Account recovery** — Password reset emails powered by Resend.
-- **Protected routes** — Authenticated access is enforced for member-only pages.
-- **Responsive UI** — Mobile-first layouts with reusable UI primitives, toast notifications, and polished loading/error states.
+- Browse the complete book catalog.
+- Search by title, author, or keyword.
+- Filter by category and sort by publication date.
+- View book details and request available books.
+- Track borrowed books, due dates, and return status.
 
-## Tech Stack
+### For contributors
 
-| Area | Technology |
+- Add books to the community collection.
+- Provide title, author, category, language, publication year, ISBN, description, and cover image.
+- Upload JPG or PNG book covers up to 5 MB.
+- View and filter books shared by the current user.
+
+### Platform features
+
+- Email/password authentication with Better Auth.
+- Google and Facebook social authentication support.
+- Password recovery through Resend.
+- JWT-backed authenticated API requests.
+- Protected member-only routes.
+- Responsive, mobile-first interface.
+- Reusable UI components and toast-based feedback.
+
+## Technology Stack
+
+| Category | Technology |
 | --- | --- |
-| Framework | Next.js 16 App Router |
+| Framework | Next.js 16 with App Router |
 | Language | TypeScript |
 | UI | React 19, Tailwind CSS 4 |
 | Authentication | Better Auth with JWT plugin |
-| Database adapter | MongoDB adapter for Better Auth |
-| Icons and UI | Lucide React, Tabler Icons, custom UI primitives |
-| Feedback | Sonner/toast notifications |
+| Persistence | MongoDB adapter for Better Auth |
+| Icons | Lucide React, Tabler Icons |
 | Email | Resend |
-| Image handling | Next.js Image |
-| Development | ESLint, React Compiler, Turbopack |
+| Notifications | Sonner |
+| Build and development | Turbopack, React Compiler |
+| Code quality | ESLint |
 
-## Application Routes
+## Application Flow
 
-| Route | Purpose | Access |
+```text
+Visitor
+  ├── Explore the catalog
+  ├── Search and filter books
+  └── View book details
+
+Registered member
+  ├── Add books to the community library
+  ├── Borrow available books
+  ├── Manage shared books
+  └── Track and return borrowed books
+```
+
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><strong>Home</strong></td>
+    <td align="center"><strong>All Books</strong></td>
+    <td align="center"><strong>My Borrows</strong></td>
+  </tr>
+  <tr>
+    <td><img src="./public/screenshots/home-page.png" alt="BookNest home page" width="420"></td>
+    <td><img src="./public/screenshots/all-books.png" alt="BookNest all books page" width="420"></td>
+    <td><img src="./public/screenshots/my-borrows.png" alt="BookNest my borrows page" width="420"></td>
+  </tr>
+</table>
+
+## Routes
+
+| Route | Description | Access |
 | --- | --- | --- |
-| `/` | Landing page with featured/new arrivals and onboarding guidance | Public |
-| `/all-books` | Browse, search, filter, and sort the book catalog | Public |
-| `/all-books/[id]` | View a book and start a borrowing request | Public |
-| `/sign-in` | Sign in to an existing account | Public |
-| `/sign-up` | Create a new account | Public |
-| `/forgot-password` | Request a password reset email | Public |
-| `/reset-password` | Set a new account password | Authenticated flow |
-| `/profile` | View and update account information | Protected |
-| `/add-books` | Add a book to the shared library | Protected |
-| `/my-books` | Manage books shared by the current user | Protected |
+| `/` | Landing page, new arrivals, and onboarding | Public |
+| `/all-books` | Searchable and filterable book catalog | Public |
+| `/all-books/[id]` | Book details and borrowing action | Public |
+| `/sign-in` | Existing user sign-in | Public |
+| `/sign-up` | New account registration | Public |
+| `/forgot-password` | Password reset request | Public |
+| `/reset-password` | Password reset completion | Auth flow |
+| `/profile` | Account profile management | Protected |
+| `/add-books` | Add a book to the library | Protected |
+| `/my-books` | Manage books shared by the user | Protected |
 | `/my-borrows` | View and return borrowed books | Protected |
-
-## Prerequisites
-
-- Node.js 20 or newer
-- npm 10 or newer
-- A running BookNest backend API
-- A MongoDB database for Better Auth
-- A Resend account/API key for password reset emails
-- OAuth credentials if Google or Facebook sign-in is enabled
 
 ## Getting Started
 
-### 1. Clone the repository
+### Prerequisites
+
+- Node.js 20 or later
+- npm 10 or later
+- A running BookNest backend API
+- MongoDB database access
+- Resend API access for password reset emails
+- OAuth credentials, if social login is enabled
+
+### Installation
 
 ```bash
 git clone https://github.com/billalhossain404/booknest-client.git
 cd booknest-client
-```
-
-### 2. Install dependencies
-
-```bash
 npm install
 ```
 
-### 3. Configure environment variables
+### Configure the environment
 
-Create a `.env.local` file in the project root:
+Create a `.env.local` file in the project root and add the variables described in [Environment Variables](#environment-variables).
 
-```env
-# Backend API base URL, without a trailing slash
-NEXT_PUBLIC_API_URL=http://localhost:5000
-
-# Better Auth
-BETTER_AUTH_URL=http://localhost:3000
-NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000
-BETTER_AUTH_SECRET=replace-with-a-long-random-secret
-BETTER_AUTH_DB_URL=mongodb://127.0.0.1:27017/booknest
-
-# Password reset email
-RESEND_API_KEY=re_xxxxxxxxx
-
-# Optional social authentication
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-FACEBOOK_CLIENT_ID=
-FACEBOOK_CLIENT_SECRET=
-```
-
-Do not commit `.env.local` or any other environment file. The repository ignores `.env*` files by default.
-
-### 4. Start the development server
+### Run locally
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000) to use the application.
+
+## Environment Variables
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `NEXT_PUBLIC_API_URL` | Yes | Base URL of the BookNest backend API |
+| `BETTER_AUTH_URL` | Yes | Canonical URL of the frontend auth server |
+| `NEXT_PUBLIC_BETTER_AUTH_URL` | Yes | Client-side Better Auth URL |
+| `BETTER_AUTH_SECRET` | Yes | Secret used to sign and protect auth data |
+| `BETTER_AUTH_DB_URL` | Yes | MongoDB connection string for Better Auth |
+| `RESEND_API_KEY` | Yes | Resend key used for password reset emails |
+| `GOOGLE_CLIENT_ID` | Optional | Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | Optional | Google OAuth client secret |
+| `FACEBOOK_CLIENT_ID` | Optional | Facebook OAuth client ID |
+| `FACEBOOK_CLIENT_SECRET` | Optional | Facebook OAuth client secret |
+
+Example:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000
+BETTER_AUTH_URL=http://localhost:3000
+NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000
+BETTER_AUTH_SECRET=replace-with-a-long-random-secret
+BETTER_AUTH_DB_URL=mongodb://127.0.0.1:27017/booknest
+RESEND_API_KEY=re_xxxxxxxxx
+```
+
+Never commit `.env.local` or production credentials. Environment files are ignored by the repository.
 
 ## Backend API Contract
 
-The frontend communicates with the backend using `NEXT_PUBLIC_API_URL`. The backend should provide the following resources:
+The frontend uses `NEXT_PUBLIC_API_URL` as the backend base URL.
 
-| Method | Endpoint | Used for |
+| Method | Endpoint | Purpose |
 | --- | --- | --- |
-| `GET` | `/all-books` | Load the catalog and new arrivals |
+| `GET` | `/all-books` | Load all books and new arrivals |
 | `GET` | `/all-books/:id` | Load a single book |
 | `POST` | `/add-books` | Add a book for the authenticated owner |
-| `GET` | `/my-books/:userId` | Load books owned by the current user |
+| `GET` | `/my-books/:userId` | Load books owned by a user |
 | `POST` | `/bookings` | Create a borrowing request |
-| `GET` | `/my-bookings/:email` | Load the current user's borrowed books |
+| `GET` | `/my-bookings/:email` | Load a user's borrowed books |
 | `DELETE` | `/all-bookings/:id` | Return a borrowed book |
 
-Book creation and borrowing requests use the Better Auth JWT token in the `Authorization` header. Ensure the backend validates that token and enforces ownership rules server-side.
+Protected create and borrowing requests include the Better Auth JWT in the `Authorization` header. The backend must validate the token and enforce authorization independently; frontend route protection must not be treated as the only security boundary.
 
 ## Available Scripts
 
@@ -146,10 +208,10 @@ Book creation and borrowing requests use the Better Auth JWT token in the `Autho
 | --- | --- |
 | `npm run dev` | Start the development server |
 | `npm run build` | Create an optimized production build |
-| `npm run start` | Serve the production build |
+| `npm run start` | Start the production server |
 | `npm run lint` | Run ESLint |
 
-Before opening a pull request, run:
+Recommended validation before submitting changes:
 
 ```bash
 npm run lint
@@ -161,35 +223,40 @@ npm run build
 ```text
 src/
 ├── app/
-│   ├── (auth)/                 # Authentication and account pages
-│   ├── all-books/              # Catalog and book details
+│   ├── (auth)/                 # Sign-in, sign-up, recovery, and profile pages
+│   ├── all-books/              # Catalog and book detail pages
 │   ├── add-books/              # Add-book form
 │   ├── my-books/               # User's shared collection
-│   ├── my-borrows/             # Borrowing history and returns
-│   ├── api/auth/[...all]/      # Better Auth API handler
-│   ├── globals.css             # Global styles and design tokens
-│   ├── layout.tsx              # Root layout, navigation, footer, metadata
+│   ├── my-borrows/             # Borrowing history and return actions
+│   ├── api/auth/[...all]/      # Better Auth route handler
+│   ├── globals.css             # Global styles
+│   ├── layout.tsx              # Root layout and global metadata
 │   └── page.tsx                # Home page
-├── components/                 # Shared pages, sections, booking, and UI
+├── components/                 # Shared sections, booking, and UI components
 ├── lib/
-│   ├── auth.ts                 # Server-side Better Auth configuration
+│   ├── auth.ts                 # Server-side auth configuration
 │   ├── auth-client.ts          # Client-side auth helpers
-│   └── getTokenFrom*.ts        # Auth token utilities
+│   └── getTokenFrom*.ts        # Token utilities
 └── proxy.ts                    # Protected route session guard
 ```
 
-## Authentication Notes
+## Authentication and Security
 
-Better Auth stores users and sessions through MongoDB and exposes its handler at `/api/auth/*`. Email/password authentication is enabled, while email verification is configured for sign-up. Password reset messages are sent using Resend. The session uses a JWT-backed cookie cache with a three-day lifetime.
-
-The frontend proxy protects member routes, but authorization must also be enforced by the backend for every protected API request.
+- Better Auth manages user accounts and sessions.
+- MongoDB stores Better Auth data through the MongoDB adapter.
+- JWT support is enabled for authenticated backend requests.
+- Member-only routes redirect unauthenticated users to `/sign-in`.
+- Password reset emails are sent through Resend.
+- Backend authorization must validate the authenticated user and resource ownership for every protected operation.
 
 ## Deployment
 
-1. Configure all production environment variables in the hosting provider.
+BookNest can be deployed to Vercel or any Node.js-compatible hosting provider.
+
+1. Configure all required production environment variables.
 2. Set `NEXT_PUBLIC_API_URL` to the deployed backend URL.
-3. Set `BETTER_AUTH_URL` and `NEXT_PUBLIC_BETTER_AUTH_URL` to the deployed frontend URL.
-4. Add the production frontend URL to the Google/Facebook OAuth redirect configuration when social login is enabled.
+3. Set both Better Auth URL variables to the deployed frontend URL.
+4. Configure production OAuth callback URLs when social login is enabled.
 5. Build and start the application:
 
    ```bash
@@ -197,14 +264,15 @@ The frontend proxy protects member routes, but authorization must also be enforc
    npm run start
    ```
 
-BookNest can be deployed to any Node.js-compatible hosting platform. Vercel is also supported for standard Next.js deployments.
+The current live deployment is available at [booknest-client-seven.vercel.app](https://booknest-client-seven.vercel.app/).
 
 ## Contributing
 
-1. Create a feature branch from the default branch.
-2. Keep changes focused and follow the existing TypeScript and component patterns.
-3. Run `npm run lint` and `npm run build`.
-4. Open a pull request with a concise description of the change and its validation.
+1. Create a focused feature branch.
+2. Follow the existing TypeScript, React, and component conventions.
+3. Keep secrets and environment files out of commits.
+4. Run `npm run lint` and `npm run build`.
+5. Open a pull request with a clear summary and validation details.
 
 ## License
 
