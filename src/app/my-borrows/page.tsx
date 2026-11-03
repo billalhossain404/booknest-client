@@ -1,7 +1,7 @@
  "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
   BookOpen,
@@ -32,25 +32,10 @@ const initialBooks: BorrowedBook[] = [
     cover: "The\nSecret\nGarden",
     coverTone: "from-[#284f36] via-[#78914b] to-[#d4b674]",
   },
-  {
-    id: 2,
-    title: "Little Women",
-    author: "Louisa May Alcott",
-    borrowedOn: "Apr 28, 2025",
-    returnBy: "May 19, 2025",
-    cover: "Little\nWomen",
-    coverTone: "from-[#73513b] via-[#bd9a69] to-[#e0c599]",
-  },
-  {
-    id: 3,
-    title: "The Little Prince",
-    author: "Antoine de Saint-Exupéry",
-    borrowedOn: "May 5, 2025",
-    returnBy: "May 26, 2025",
-    cover: "The Little\nPrince",
-    coverTone: "from-[#183d68] via-[#31658d] to-[#dba84e]",
-  },
+
 ];
+
+const RETURNED_BOOKS_STORAGE_KEY = "booknest-returned-books";
 
 function BookCover({ book }: { book: BorrowedBook }) {
   return (
@@ -99,11 +84,50 @@ function StatCard({
 
 export default function MyBorrowsPage() {
   const [books, setBooks] = useState(initialBooks);
+
+  useEffect(() => {
+    const storedReturnedBooks = window.localStorage.getItem(
+      RETURNED_BOOKS_STORAGE_KEY,
+    );
+
+    if (!storedReturnedBooks) {
+      return;
+    }
+
+    try {
+      const returnedBookIds = JSON.parse(storedReturnedBooks) as unknown;
+
+      if (!Array.isArray(returnedBookIds)) {
+        return;
+      }
+
+      window.setTimeout(() => {
+        setBooks((currentBooks) =>
+          currentBooks.filter((book) => !returnedBookIds.includes(book.id)),
+        );
+      }, 0);
+    } catch (error) {
+      console.error("Unable to restore returned books:", error);
+    }
+  }, []);
+
   const borrowedCount = books.length;
   const dueThisWeek = useMemo(() => books.length > 0 ? 2 : 0, [books.length]);
 
   const returnBook = (id: number) => {
-    setBooks((currentBooks) => currentBooks.filter((book) => book.id !== id));
+    setBooks((currentBooks) => {
+      const updatedBooks = currentBooks.filter((book) => book.id !== id);
+      const returnedBookIds = initialBooks
+        .filter((book) => !updatedBooks.some((updatedBook) => updatedBook.id === book.id))
+        .map((book) => book.id);
+
+      window.localStorage.setItem(
+        RETURNED_BOOKS_STORAGE_KEY,
+        JSON.stringify(returnedBookIds),
+      );
+
+      return updatedBooks;
+    });
   };
 
   return (

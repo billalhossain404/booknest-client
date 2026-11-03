@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   ArrowRight,
@@ -100,16 +101,14 @@ function BookCard({ book }: { book: Book }) {
             Available
           </span>
 
-          <a
-            href={book.bookUrl || undefined}
-            target={book.bookUrl ? "_blank" : undefined}
-            rel={book.bookUrl ? "noreferrer" : undefined}
-            aria-disabled={!book.bookUrl}
-            className="inline-flex items-center gap-2 text-sm font-medium text-[#a66e1d] underline-offset-4 transition-colors hover:text-[#744a10] hover:underline"
-          >
-            View Details
-            <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-          </a>
+<Link
+  href={`/all-books/${book._id || ""}`}
+  aria-disabled={!book._id}
+  className="group inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-[#a66e1d] transition-all duration-300 ease-out hover:-translate-y-1 hover:bg-[#234D3C] hover:text-white hover:shadow-[0_6px_18px_rgba(35,77,60,0.25)] aria-disabled:pointer-events-none aria-disabled:opacity-50"
+>
+  View Details
+  <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+</Link>
         </div>
       </CardContent>
     </Card>
