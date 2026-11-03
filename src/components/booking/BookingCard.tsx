@@ -104,7 +104,7 @@ const BookingCard = ({ book }: BookingCardProps) => {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/bookings`,
+        `${process.env.NEXT_PUBLIC_API_URL}/bookings`,
         {
         method: "POST",
         headers: {

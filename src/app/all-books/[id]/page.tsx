@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import BookingCard from "@/components/booking/BookingCard";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 type Book = {
   _id?: string;
@@ -42,7 +43,7 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/all-books`;
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/all-books`;
 
 // Book Image Component
 function BookImage({ book }: { book: Book }) {
@@ -76,9 +77,14 @@ export default async function SingleBookDetails({ params }: PageProps) {
   let book: Book | null = null;
   let errorMessage = "";
 
+  const token = await getTokenFromServer();
+
   try {
     const response = await fetch(`${API_URL}/${id}`, {
       cache: "no-store",
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
     });
 
     const data = (await response.json()) as BookResponse;

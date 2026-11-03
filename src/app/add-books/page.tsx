@@ -35,6 +35,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getTokernFromClient } from "@/lib/getTokenFromClient";
 
 const fieldClass =
   "h-11 rounded-lg border-[#d9ddd8] bg-white/70 px-3 text-sm text-[#303b36] shadow-none placeholder:text-[#89908b] focus-visible:border-[#2d6a52] focus-visible:ring-[#2d6a52]/20";
@@ -48,7 +49,7 @@ const categories = [
   "Biography",
 ];
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = `process.env.NEXT_PUBLIC_API_URL `;
 
 const initialForm = {
   title: "",
@@ -64,10 +65,8 @@ const initialForm = {
 type BookForm = typeof initialForm;
 
 export default function AddBookPage() {
-  const {
-    data: session,
-    isPending: isSessionPending,
-  } = authClient.useSession();
+  const { data: session, isPending: isSessionPending } =
+    authClient.useSession();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<BookForm>(initialForm);
@@ -131,66 +130,69 @@ export default function AddBookPage() {
     }
   };
 
-  const handleSubmit = async (
-  event: FormEvent<HTMLFormElement>
-) => {
-  event.preventDefault();
-
-  // Check authentication loading
-  if (isSessionPending) {
-    setSubmitMessage("Please wait, checking your account...");
-    return;
-  }
-
-  // Get logged-in user ID
-  const userId = session?.user?.id;
-
-  // Check user login
-  if (!userId) {
-    setSubmitMessage("Please sign in before adding a book.");
-    return;
-  }
-
-  try {
-
-    // Book data with owner ID
-    const bookData = {
-      ...form,
-      ownerId: userId,
-    };
-
-    const response = await fetch(`${API_URL}/add-books`, {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify(bookData),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to add book");
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // Check authentication loading
+    if (isSessionPending) {
+      setSubmitMessage("Please wait, checking your account...");
+      return;
     }
 
-    // Success
-    handleReset();
-    setSuccessOpen(true);
+    // Get logged-in user ID
+    const userId = session?.user?.id;
 
-  } catch (error) {
+    // Check user login
+    if (!userId) {
+      setSubmitMessage("Please sign in before adding a book.");
+      return;
+    }
 
-    console.error("Error:", error);
+    const { data, error: tokenError } = await authClient.token();
 
-    setSubmitMessage(
-      error instanceof Error
-        ? error.message
-        : "Something went wrong"
-    );
+    if (tokenError || !data?.token) {
+      setSubmitMessage("Unable to get authentication token.");
+      return;
+    }
 
-  }
-};
+    const token = data.token;
+
+    try {
+      // Book data with owner ID
+      const bookData = {
+        ...form,
+        ownerId: userId,
+      };
+
+      const token = await getTokernFromClient();
+
+      const response = await fetch(`${API_URL}/add-books`, {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+
+        body: JSON.stringify(bookData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to add book");
+      }
+
+      // Success
+      handleReset();
+      setSuccessOpen(true);
+    } catch (error) {
+      console.error("Error:", error);
+
+      setSubmitMessage(
+        error instanceof Error ? error.message : "Something went wrong",
+      );
+    }
+  };
 
   return (
     <main className="min-h-[calc(100vh-5rem)] bg-[#f7f7f3] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">

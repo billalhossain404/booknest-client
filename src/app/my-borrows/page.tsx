@@ -101,7 +101,7 @@ const MyBorrows = async () => {
   if (user?.email) {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/my-bookings/${encodeURIComponent(user.email)}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${encodeURIComponent(user.email)}`,
         {
           cache: "no-store",
         },
@@ -144,7 +144,7 @@ const MyBorrows = async () => {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/all-bookings/${encodeURIComponent(bookingId)}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/all-bookings/${encodeURIComponent(bookingId)}`,
         {
           method: "DELETE",
           headers: {

@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 import { MongoClient } from "mongodb";
 import { Resend } from "resend";
+import { jwt } from "better-auth/plugins";
 
 const client = new MongoClient(
   process.env.BETTER_AUTH_DB_URL || process.env.BATTER_AUTH_DB_URL || "",
@@ -65,4 +66,12 @@ export const auth = betterAuth({
       }),
     },
   },
+    plugins: [jwt()],
+    session: {
+      cookieCache: {
+        enabled: true,
+        strategy: "jwt",
+        maxAge: 60 * 60 * 24 * 3, // 3 days
+      },
+    },
 });
