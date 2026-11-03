@@ -1,8 +1,10 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import Image from "next/image";
+import ReturnBookButton from "@/components/booking/ReturnBookButton";
 
 import {
   ArrowRight,
@@ -85,16 +87,6 @@ function StatCard({
   );
 }
 
-// Logout Action
-async function handleLogout() {
-  "use server";
-
-  await auth.api.signOut({
-    headers: await headers(),
-  });
-
-  redirect("/signin");
-}
 
 // Main Component
 const MyBorrows = async () => {
@@ -137,6 +129,57 @@ const MyBorrows = async () => {
           : "Unable to load your borrowed books.";
     }
   }
+
+  // Handle Return Book
+
+  const handleReturn = async (formData: FormData) => {
+    "use server";
+
+    const bookingId = formData.get("bookingId");
+
+    if (typeof bookingId !== "string" || !bookingId) {
+      return {
+        success: false,
+        message: "Booking ID is missing.",
+      };
+    }
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/all-bookings/${encodeURIComponent(bookingId)}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        return {
+          success: false,
+          message: data.message || "Failed to return book.",
+        };
+      }
+
+      // Refresh All Books cache
+      revalidatePath("/all-books");
+
+      return {
+        success: true,
+        message: data.message || "Your book has been returned successfully!",
+      };
+    } catch (error) {
+      console.error("Return error:", error);
+
+      return {
+        success: false,
+        message: "Something went wrong. Please try again.",
+      };
+    }
+  };
 
   // Date Calculation
   const today = new Date();
@@ -224,7 +267,7 @@ const MyBorrows = async () => {
 
           <nav className="space-y-1 py-5">
             <Link
-              href="/all-books"
+              href="/my-books"
               className="flex items-center gap-3 rounded-md px-3 py-2.5 text-xs text-[#405148] transition hover:bg-white/70"
             >
               <BookOpen size={18} strokeWidth={1.5} />
@@ -248,17 +291,6 @@ const MyBorrows = async () => {
             </Link>
           </nav>
 
-          <div className="border-t border-[#d8ddcf] pt-5">
-            <form action={handleLogout}>
-              <button
-                type="submit"
-                className="flex items-center gap-3 px-3 py-2.5 text-xs text-[#405148] transition hover:text-[#174b39]"
-              >
-                <LogOut size={18} strokeWidth={1.5} />
-                Log out
-              </button>
-            </form>
-          </div>
         </aside>
 
         {/* Main Content */}
@@ -377,13 +409,10 @@ const MyBorrows = async () => {
                       </span>
 
                       {/* Return Button */}
-                      <button
-                        type="button"
-                        disabled
-                        className="w-full cursor-not-allowed rounded-md border border-[#c99c50] px-2 py-2 text-[10px] font-medium text-[#9a6a22] opacity-60 sm:w-auto"
-                      >
-                        Return Book
-                      </button>
+                      <ReturnBookButton
+                        bookingId={book.id}
+                        action={handleReturn}
+                      />
                     </div>
                   );
                 })

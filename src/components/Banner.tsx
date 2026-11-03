@@ -15,7 +15,7 @@ const slides = [
     description:
       "BookNest is a community library where people borrow, share and discover books. Different shelves, brighter conversations, a kinder world — one book at a time.",
     buttonText: "Browse Books",
-    buttonLink: "/books",
+    buttonLink: "/all-books",
   },
   {
     image: "/images/banner2.png",
@@ -26,7 +26,7 @@ const slides = [
     description:
       "From timeless classics to exciting new discoveries, explore a collection of books that inspire curiosity, spark imagination and make every reading moment meaningful.",
     buttonText: "Explore Collection",
-    buttonLink: "/books",
+    buttonLink: "/all-books",
   },
   {
     image: "/images/banner3.png",
@@ -37,7 +37,7 @@ const slides = [
     description:
       "Your next favorite book is closer than you think. Discover available books, borrow from fellow readers and enjoy a simple, connected library experience with BookNest.",
     buttonText: "Start Borrowing",
-    buttonLink: "/books",
+    buttonLink: "/all-books",
   },
   {
     image: "/images/banner4.png",
@@ -48,7 +48,7 @@ const slides = [
     description:
       "Have books sitting on your shelf? Give them a new purpose. Add your books to BookNest, share them with the community and help more readers discover something wonderful.",
     buttonText: "Share Your Books",
-    buttonLink: "/books/new",
+    buttonLink: "/all-books",
   },
   {
     image: "/images/banner5.png",
@@ -59,7 +59,7 @@ const slides = [
     description:
       "Keep your reading experience organized in one beautiful place. Easily manage your borrowed books, explore your collection and stay connected with your growing library.",
     buttonText: "My Borrowed Books",
-    buttonLink: "/my-borrows",
+    buttonLink: "/all-books",
   },
 ];
 
