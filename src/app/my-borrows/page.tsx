@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import Image from "next/image";
@@ -12,7 +11,6 @@ import {
   BookOpenCheck,
   CalendarDays,
   CircleAlert,
-  LogOut,
   UserRound,
 } from "lucide-react";
 

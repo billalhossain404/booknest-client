@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { CheckCircle2 } from "lucide-react";
-
+import { authClient } from "@/lib/auth-client";
 import {
   useEffect,
   useRef,
@@ -48,6 +48,8 @@ const categories = [
   "Biography",
 ];
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 const initialForm = {
   title: "",
   author: "",
@@ -62,6 +64,10 @@ const initialForm = {
 type BookForm = typeof initialForm;
 
 export default function AddBookPage() {
+  const {
+    data: session,
+    isPending: isSessionPending,
+  } = authClient.useSession();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<BookForm>(initialForm);
@@ -125,33 +131,66 @@ export default function AddBookPage() {
     }
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async (
+  event: FormEvent<HTMLFormElement>
+) => {
+  event.preventDefault();
 
-    try {
-      const response = await fetch("http://localhost:8000/add-books", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
+  // Check authentication loading
+  if (isSessionPending) {
+    setSubmitMessage("Please wait, checking your account...");
+    return;
+  }
 
-      const data = await response.json();
+  // Get logged-in user ID
+  const userId = session?.user?.id;
 
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to add book");
-      }
+  // Check user login
+  if (!userId) {
+    setSubmitMessage("Please sign in before adding a book.");
+    return;
+  }
 
-      handleReset();
-      setSuccessOpen(true);
-    } catch (error) {
-      console.error("Error:", error);
-      setSubmitMessage(
-        error instanceof Error ? error.message : "Something went wrong",
-      );
+  try {
+
+    // Book data with owner ID
+    const bookData = {
+      ...form,
+      ownerId: userId,
+    };
+
+    const response = await fetch(`${API_URL}/add-books`, {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(bookData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to add book");
     }
-  };
+
+    // Success
+    handleReset();
+    setSuccessOpen(true);
+
+  } catch (error) {
+
+    console.error("Error:", error);
+
+    setSubmitMessage(
+      error instanceof Error
+        ? error.message
+        : "Something went wrong"
+    );
+
+  }
+};
 
   return (
     <main className="min-h-[calc(100vh-5rem)] bg-[#f7f7f3] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">

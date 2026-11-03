@@ -3,7 +3,6 @@
 import { useState, type FormEvent } from "react";
 import { useSession, updateUser } from "@/lib/auth-client";
 import { Loader2, UserRound, Mail, Save } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import {
@@ -23,8 +22,6 @@ import { toast } from "@/components/ui/toast";
 
 export default function ProfilePage() {
   const { data: session, isPending, refetch } = useSession();
-  const router = useRouter();
-
   const [isSaving, setIsSaving] = useState(false);
 
   // Update Profile

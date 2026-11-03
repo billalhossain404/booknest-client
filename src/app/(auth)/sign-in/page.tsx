@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { signIn } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ type FormErrors = Partial<Record<FormField, string>>;
 type SocialProvider = "google" | "facebook";
 
 export default function Basic() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<SocialProvider | null>(
@@ -80,7 +82,7 @@ export default function Basic() {
       }
 
       toast.add({ type: "success", title: "Logged in successfully!" });
-      window.location.href = "/";
+      router.push("/");
     } catch {
       toast.add({
         type: "error",

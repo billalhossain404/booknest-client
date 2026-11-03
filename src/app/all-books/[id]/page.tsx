@@ -42,7 +42,7 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
-const API_URL = "http://localhost:8000/all-books";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/all-books`;
 
 // Book Image Component
 function BookImage({ book }: { book: Book }) {
