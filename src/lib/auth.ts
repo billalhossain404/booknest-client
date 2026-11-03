@@ -23,7 +23,8 @@ export const auth = betterAuth({
   database: mongodbAdapter(db, { client }),
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    // The app does not currently provide an email verification flow.
+    requireEmailVerification: false,
     sendResetPassword: async ({ user, url }) => {
       await resend.emails.send({
         from: "BookNest <onboarding@resend.dev>",
