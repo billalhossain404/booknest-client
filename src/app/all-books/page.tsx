@@ -16,6 +16,8 @@ export default async function AllBooksPage() {
     const response = await fetch(API_URL, { cache: "no-store" });
     const data = (await response.json()) as BooksResponse;
 
+    console.log("Fetched data:", data); // Debugging line
+    console.log("Response status:", response); // Debugging line
     if (!response.ok || !data.success) {
       throw new Error(data.message || "Unable to load books.");
     }
