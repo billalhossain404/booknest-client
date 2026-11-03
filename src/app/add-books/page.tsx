@@ -35,7 +35,6 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { getTokernFromClient } from "@/lib/getTokenFromClient";
 
 const fieldClass =
   "h-11 rounded-lg border-[#d9ddd8] bg-white/70 px-3 text-sm text-[#303b36] shadow-none placeholder:text-[#89908b] focus-visible:border-[#2d6a52] focus-visible:ring-[#2d6a52]/20";
@@ -49,7 +48,7 @@ const categories = [
   "Biography",
 ];
 
-const API_URL = `process.env.NEXT_PUBLIC_API_URL `;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const initialForm = {
   title: "",
@@ -162,8 +161,6 @@ export default function AddBookPage() {
         ...form,
         ownerId: userId,
       };
-
-      const token = await getTokernFromClient();
 
       const response = await fetch(`${API_URL}/add-books`, {
         method: "POST",
