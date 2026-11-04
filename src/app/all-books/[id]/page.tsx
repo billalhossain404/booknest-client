@@ -173,7 +173,7 @@ export default async function SingleBookDetails({ params }: PageProps) {
         {/* Book Details */}
         <section className="grid gap-6 lg:grid-cols-[1.05fr_1fr] lg:gap-10">
           {/* Book Image */}
-          <div className="relative flex min-h-[420px] items-center justify-center overflow-hidden rounded-2xl bg-[#e8ede1] shadow-[0_12px_30px_rgba(27,65,48,0.12)] sm:min-h-[560px]">
+          <div className="relative flex min-h-[360px] items-center justify-center overflow-hidden rounded-2xl bg-[#e8ede1] shadow-[0_12px_30px_rgba(27,65,48,0.12)] sm:min-h-[560px]">
             <BookImage book={book} />
           </div>
 

@@ -83,7 +83,7 @@ const Banner = () => {
       aria-label="BookNest highlights"
       className="relative overflow-hidden border-b border-[#EAE6DC] bg-[#FAF9F5]"
     >
-      <div className="relative flex min-h-[620px] w-full items-center px-6 py-16 lg:min-h-[590px]">
+      <div className="relative flex min-h-[540px] w-full items-center px-4 py-12 sm:min-h-[620px] sm:px-6 sm:py-16 lg:min-h-[590px]">
 
         {slides.map((slide, index) => (
           <Image
@@ -118,24 +118,24 @@ const Banner = () => {
                 }`}
               >
 
-                <p className="mb-5 text-xs font-semibold uppercase tracking-[0.32em] text-[#B18B4F] sm:text-sm">
+                <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.24em] text-[#B18B4F] sm:mb-5 sm:text-sm sm:tracking-[0.32em]">
                   {slide.subtitle}
                 </p>
 
-                <h1 className="max-w-lg text-5xl font-semibold leading-[0.98] tracking-[-0.04em] text-[#234D3C] sm:text-6xl lg:text-7xl">
+                <h1 className="max-w-lg text-4xl font-semibold leading-[0.98] tracking-[-0.04em] text-[#234D3C] sm:text-6xl lg:text-7xl">
                   {slide.title1}
                   <br />
                   {slide.title2}
                 </h1>
 
-                <p className="mt-7 max-w-md text-base leading-7 text-[#535B53] sm:text-lg">
+                <p className="mt-5 max-w-md text-sm leading-6 text-[#535B53] sm:mt-7 sm:text-lg sm:leading-7">
                   {slide.description}
                 </p>
 
                 <Link
                   href={slide.buttonLink}
                   tabIndex={activeSlide === index ? 0 : -1}
-                  className="mt-8 inline-flex items-center gap-3 rounded-md bg-[#234D3C] px-6 py-4 text-sm font-semibold text-white transition-colors hover:bg-[#18382C]"
+                  className="mt-6 inline-flex items-center gap-3 rounded-md bg-[#234D3C] px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#18382C] sm:mt-8 sm:px-6 sm:py-4"
                 >
                   {slide.buttonText}
                   <ArrowRight className="h-5 w-5" />
@@ -147,7 +147,7 @@ const Banner = () => {
           </div>
         </div>
 
-        <div className="absolute bottom-7 left-1/2 z-10 flex w-full max-w-7xl -translate-x-1/2 items-center justify-end gap-3 px-6">
+        <div className="absolute bottom-5 left-1/2 z-10 flex w-full max-w-7xl -translate-x-1/2 items-center justify-end gap-2 px-4 sm:bottom-7 sm:gap-3 sm:px-6">
 
           <button
             type="button"

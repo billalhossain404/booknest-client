@@ -34,15 +34,15 @@ export default function Navbar() {
 
   return (
     <header className="w-full border-b border-[#EAE6DC] bg-[#FAF9F5]">
-      <div className="mx-auto flex min-h-20 max-w-7xl flex-wrap items-center justify-between gap-2 px-3 sm:gap-4 sm:px-6">
-        <Link href="/" className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+      <div className="mx-auto flex min-h-20 max-w-7xl flex-wrap items-center justify-between gap-2 px-2 sm:gap-4 sm:px-6">
+        <Link href="/" className="flex min-w-0 shrink items-center gap-1.5 sm:gap-2">
           <IconBook
             stroke={1.5}
             size={38}
-            className="text-[#234D3C] sm:h-[60px] sm:w-[60px]"
+            className="h-8 w-8 shrink-0 text-[#234D3C] sm:h-[60px] sm:w-[60px]"
           />
 
-          <span className="text-xl font-normal text-[#234D3C] sm:text-3xl">
+          <span className="truncate text-lg font-normal text-[#234D3C] sm:text-3xl">
             {" "}
             BookNest{" "}
           </span>
@@ -74,7 +74,7 @@ export default function Navbar() {
           </nav>
         )}
 
-        <div className="flex shrink-0 items-center gap-1.5 sm:gap-3 [&_a:first-child]:text-sm [&_a:last-child]:px-2.5 [&_a:last-child]:py-2 sm:[&_a:first-child]:text-[17px] sm:[&_a:last-child]:px-5 sm:[&_a:last-child]:py-3">
+        <div className="flex shrink-0 items-center gap-1 [&_a:first-child]:text-xs [&_a:last-child]:px-2 [&_a:last-child]:py-2 sm:gap-3 sm:[&_a:first-child]:text-[17px] sm:[&_a:last-child]:px-5 sm:[&_a:last-child]:py-3">
           <UserInfo />
 
           {/* Mobile Hamburger Menu */}

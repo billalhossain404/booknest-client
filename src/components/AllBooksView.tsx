@@ -73,14 +73,14 @@ function BookCover({ book }: { book: Book }) {
 
 function BookCard({ book }: { book: Book }) {
   return (
-    <Card className="group grid min-h-[225px] grid-cols-[116px_1fr] gap-5 rounded-2xl border border-[#dde3d8] bg-[#f7f8f0]/80 p-3 shadow-none transition-all duration-300 hover:-translate-y-1 hover:border-[#9dbca9] hover:bg-[#f5f8ee] hover:shadow-[0_12px_28px_rgba(27,65,48,0.12)] sm:grid-cols-[150px_1fr] sm:gap-5 sm:p-3">
-      <div className="relative min-h-[198px] overflow-hidden rounded-xl bg-[#e6eee6] shadow-[0_4px_12px_rgba(28,55,43,0.16)]">
+    <Card className="group grid min-h-[205px] grid-cols-[92px_minmax(0,1fr)] gap-3 rounded-2xl border border-[#dde3d8] bg-[#f7f8f0]/80 p-2.5 shadow-none transition-all duration-300 hover:-translate-y-1 hover:border-[#9dbca9] hover:bg-[#f5f8ee] hover:shadow-[0_12px_28px_rgba(27,65,48,0.12)] sm:min-h-[225px] sm:grid-cols-[150px_1fr] sm:gap-5 sm:p-3">
+      <div className="relative min-h-[180px] overflow-hidden rounded-xl bg-[#e6eee6] shadow-[0_4px_12px_rgba(28,55,43,0.16)] sm:min-h-[198px]">
         <BookCover book={book} />
       </div>
 
       <CardContent className="flex min-w-0 flex-col px-0 py-2 pr-2">
         <div>
-          <h2 className="line-clamp-2 font-serif text-xl font-bold leading-tight text-[#172d26] sm:text-[22px]">
+          <h2 className="line-clamp-2 font-serif text-lg font-bold leading-tight text-[#172d26] sm:text-[22px]">
             {book.title}
           </h2>
           <p className="mt-1 line-clamp-2 text-sm text-[#68736b] sm:text-base">
@@ -95,7 +95,7 @@ function BookCard({ book }: { book: Book }) {
           {book.category}
         </Badge>
 
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-4 sm:gap-3 sm:pt-5">
           <span className="inline-flex items-center gap-2 rounded-full bg-[#e1f0df] px-2.5 py-1 text-xs font-medium text-[#23603f]">
             <span className="size-2 rounded-full bg-[#15803d]" />
             Available

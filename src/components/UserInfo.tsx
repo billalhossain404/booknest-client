@@ -50,7 +50,7 @@ const UserInfo = () => {
 
           {/* Animated Dropdown */}
           <div
-            className={`absolute right-0 top-full z-50 w-[320px] pt-3 origin-top-right transition-all duration-300 ease-out ${
+            className={`absolute right-0 top-full z-50 w-[min(320px,calc(100vw-16px))] pt-3 origin-top-right transition-all duration-300 ease-out ${
               isOpen
                 ? "visible translate-y-0 scale-100 opacity-100"
                 : "invisible -translate-y-3 scale-95 opacity-0 pointer-events-none"
@@ -107,17 +107,17 @@ const UserInfo = () => {
         </>
       ) : (
         /* Login and Signup */
-        <div className="flex shrink-0 items-center gap-4">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-4">
           <Link
             href="/sign-in"
-            className="whitespace-nowrap text-[17px] font-medium text-[#234D3C] transition-colors hover:text-[#B18B4F]"
+            className="whitespace-nowrap text-sm font-medium text-[#234D3C] transition-colors hover:text-[#B18B4F] sm:text-[17px]"
           >
             Login
           </Link>
 
           <Link
             href="/sign-up"
-            className="inline-flex items-center gap-2 whitespace-nowrap rounded-md bg-[#234D3C] px-5 py-3 text-sm font-medium text-white transition-all hover:bg-[#18382C]"
+            className="inline-flex items-center gap-1 whitespace-nowrap rounded-md bg-[#234D3C] px-3 py-2 text-xs font-medium text-white transition-all hover:bg-[#18382C] sm:gap-2 sm:px-5 sm:py-3 sm:text-sm"
           >
             Join the library
           </Link>
